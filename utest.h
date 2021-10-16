@@ -21,6 +21,8 @@
 #define UTEST_PRINT_BUF_SIZE 1024
 #endif
 
+typedef unsigned long long int bigint_t;
+
 static char print_buf[UTEST_PRINT_BUF_SIZE];
 
 #define printf(...)                                                            \
@@ -41,16 +43,16 @@ static char print_buf[UTEST_PRINT_BUF_SIZE];
 
 #define FAIL()                                                                 \
     {                                                                          \
-        printf(RED "failed" RESET ": " __FILE__ "+%ld: explicit fail\n",       \
+        printf(RED "failed" RESET ": " __FILE__ "+%d: explicit fail\n",        \
                __LINE__);                                                      \
         return TEST_FAIL;                                                      \
     }
 
 #define ASSERT_EQ(A, B)                                                        \
     {                                                                          \
-        if (A != B) {                                                          \
-            printf(RED "failed" RESET ": " __FILE__ "+%ld: %lld != %lld\n",    \
-                   __LINE__, A, B);                                            \
+        if ((bigint_t)(A) != (bigint_t)(B)) {                                  \
+            printf(RED "failed" RESET ": " __FILE__ "+%d: %lld != %lld\n",     \
+                   __LINE__, (bigint_t)(A), (bigint_t)(B));                    \
             return TEST_FAIL;                                                  \
         }                                                                      \
     }
