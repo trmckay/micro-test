@@ -1,0 +1,6 @@
+*.o
+*.a
+*.so
+compile_commands.json
+.cache
+malloc-test

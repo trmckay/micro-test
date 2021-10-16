@@ -4,8 +4,11 @@
 #include <stdio.h>
 #include <string.h>
 
+#define TEST_PASS 0
+#define TEST_FAIL 1
+
 #define MAX_TESTS 256
-#define TEST_NAME_SIZE 64
+#define TEST_NAME_SIZE 32
 
 #define RED "\033[31m"
 #define GREEN "\033[32m"
@@ -21,37 +24,45 @@
 static char print_buf[PRINT_BUF_SIZE];
 
 #define printf(...)                                                            \
-  {                                                                            \
-    sprintf(print_buf, __VA_ARGS__);                                           \
-    fputs(print_buf, stdout);                                                  \
-  }
+    {                                                                          \
+        sprintf(print_buf, __VA_ARGS__);                                       \
+        fputs(print_buf, stdout);                                              \
+    }
 
 #define eprintf(...)                                                           \
-  {                                                                            \
-    sprintf(print_buf, __VA_ARGS__);                                           \
-    fputs(print_buf, stderr);                                                  \
-  }
+    {                                                                          \
+        sprintf(print_buf, __VA_ARGS__);                                       \
+        fputs(print_buf, stderr);                                              \
+    }
 #else
 #define eprintf(...)                                                           \
-  { fprintf(stderr, __VA_ARGS__); }
+    { fprintf(stderr, __VA_ARGS__); }
 #endif
 
-#define FAIL() return 1
+#define FAIL()                                                                 \
+    {                                                                          \
+        printf(RED "failed" RESET ": " __FILE__ "+%ld: explicit fail\n",       \
+               __LINE__);                                                      \
+        return TEST_FAIL;                                                      \
+    }
 
 #define ASSERT_EQ(A, B)                                                        \
-  {                                                                            \
-    if ((A) != (B))                                                            \
-      FAIL();                                                                  \
-  }
+    {                                                                          \
+        if (A != B) {                                                          \
+            printf(RED "failed" RESET ": " __FILE__ "+%ld: %lld != %lld\n",    \
+                   __LINE__, A, B);                                            \
+            return TEST_FAIL;                                                  \
+        }                                                                      \
+    }
 
 typedef int (*int_fn_void)(void);
 typedef void (*void_fn_void)(void);
 
 typedef struct test_st {
-  int_fn_void fn;
-  void_fn_void setup;
-  void_fn_void teardown;
-  char name[TEST_NAME_SIZE];
+    int_fn_void fn;
+    void_fn_void setup;
+    void_fn_void teardown;
+    char name[TEST_NAME_SIZE];
 } test_t;
 
 void register_test(int_fn_void fn, void_fn_void setup, void_fn_void teardown,

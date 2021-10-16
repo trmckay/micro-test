@@ -15,7 +15,7 @@ endif
 
 LDFLAGS := -shared
 
-OBJ = $(patsubst %.c,%.o,$(wildcard *.c))
+OBJ = utest.o
 
 .PHONY: all
 all: $(TARGETS)
