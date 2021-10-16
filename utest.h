@@ -1,5 +1,5 @@
-#ifndef TEST_H
-#define TEST_H
+#ifndef UTEST_H
+#define U_TEST_H
 
 #include <stdio.h>
 #include <string.h>
@@ -7,8 +7,8 @@
 #define TEST_PASS 0
 #define TEST_FAIL 1
 
-#define MAX_TESTS 256
-#define TEST_NAME_SIZE 32
+#define UTEST_MAX_TESTS 256
+#define UTEST_NAME_SIZE 32
 
 #define RED "\033[31m"
 #define GREEN "\033[32m"
@@ -17,11 +17,11 @@
 
 #ifdef PRINTF_NO_HEAP
 
-#ifndef PRINT_BUF_SIZE
-#define PRINT_BUF_SIZE 1024
+#ifndef UTEST_PRINT_BUF_SIZE
+#define UTEST_PRINT_BUF_SIZE 1024
 #endif
 
-static char print_buf[PRINT_BUF_SIZE];
+static char print_buf[UTEST_PRINT_BUF_SIZE];
 
 #define printf(...)                                                            \
     {                                                                          \
@@ -62,7 +62,7 @@ typedef struct test_st {
     int_fn_void fn;
     void_fn_void setup;
     void_fn_void teardown;
-    char name[TEST_NAME_SIZE];
+    char name[UTEST_NAME_SIZE];
 } test_t;
 
 void register_test(int_fn_void fn, void_fn_void setup, void_fn_void teardown,

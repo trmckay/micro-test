@@ -1,21 +1,21 @@
 #include "utest.h"
 
-test_t tests[MAX_TESTS];
+test_t tests[UTEST_MAX_TESTS];
 static size_t test_count = 0;
 
 void register_test(int_fn_void fn, void_fn_void setup, void_fn_void teardown,
                    char *name) {
     test_t test;
 
-    if (test_count == MAX_TESTS) {
-        eprintf("Too many tests (max tests = %d)!\n", MAX_TESTS);
+    if (test_count == UTEST_MAX_TESTS) {
+        eprintf("Too many tests (max tests = %d)!\n", UTEST_MAX_TESTS);
         return;
     }
 
     test.fn = fn;
     test.setup = setup;
     test.teardown = teardown;
-    strncpy(test.name, name, TEST_NAME_SIZE);
+    strncpy(test.name, name, UTEST_NAME_SIZE);
 
     tests[test_count++] = test;
 }
