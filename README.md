@@ -9,8 +9,8 @@ Simply include the C and header file in your codebase and register/run your test
 consists of:
 
 * A test funtion (`int (*fn)(void)`) that returns `TEST_PASS` or `TEST_FAIL`
-* Optional setup function (`(void)(*fn)(void)`, `NULL` if not used)
-* Optional teardown function (`(void)(*fn)(void)`, `NULL` if not used)
+* Optional setup function (`void (*fn)(void)`, `NULL` if not used)
+* Optional teardown function (`void (*fn)(void)`, `NULL` if not used)
 * A name
 
 In your entrypoint, register each test and then call `run_tests()`.
