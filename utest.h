@@ -57,6 +57,15 @@ static char print_buf[UTEST_PRINT_BUF_SIZE];
         }                                                                      \
     }
 
+#define ASSERT_NEQ(A, B)                                                       \
+    {                                                                          \
+        if ((bigint_t)(A) == (bigint_t)(B)) {                                  \
+            printf(RED "failed" RESET ": " __FILE__ "+%d: %lld != %lld\n",     \
+                   __LINE__, (bigint_t)(A), (bigint_t)(B));                    \
+            return TEST_FAIL;                                                  \
+        }                                                                      \
+    }
+
 typedef int (*int_fn_void)(void);
 typedef void (*void_fn_void)(void);
 
