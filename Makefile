@@ -9,8 +9,8 @@ TARGETS := $(ARCHIVE) $(SO)
 
 CFLAGS := -g -Wall -Werror -fPIC
 
-ifeq ($(NO_HEAP),1)
-	CFLAGS += -D PRINTF_NO_HEAP
+ifeq ($(NO_STD),1)
+	CFLAGS += -D NO_STD
 endif
 
 LDFLAGS := -shared
