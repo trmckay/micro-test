@@ -70,5 +70,5 @@ int run_tests(void) {
 
     utest_printer("\nSummary: %d passed, %d failed.\n", passed, failed);
 
-    return failed == 0;
+    return failed != 0;
 }
