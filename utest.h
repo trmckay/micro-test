@@ -60,8 +60,17 @@ static char print_buf[UTEST_PRINT_BUF_SIZE];
 #define ASSERT_NEQ(A, B)                                                       \
     {                                                                          \
         if ((bigint_t)(A) == (bigint_t)(B)) {                                  \
-            printf(RED "failed" RESET ": " __FILE__ "+%d: %lld != %lld\n",     \
+            printf(RED "failed" RESET ": " __FILE__ "+%d: %lld == %lld\n",     \
                    __LINE__, (bigint_t)(A), (bigint_t)(B));                    \
+            return TEST_FAIL;                                                  \
+        }                                                                      \
+    }
+
+#define ASSERT_NOT_NULL(A)                                                     \
+    {                                                                          \
+        if ((void *)(A) == NULL) {                                             \
+            printf(RED "failed" RESET ": " __FILE__ "+%d: %p == NULL\n",       \
+                   __LINE__, (void *)(A));                                     \
             return TEST_FAIL;                                                  \
         }                                                                      \
     }
