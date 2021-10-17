@@ -44,6 +44,16 @@ extern int (*utest_printer)(const char *, ...);
         }                                                                      \
     }
 
+#define ASSERT_PTR_EQ(A, B)                                                        \
+    {                                                                          \
+        if ((A) != (B)) {                                                      \
+            utest_printer(RED "failed" RESET ": " __FILE__                     \
+                              "+%d: Expected = %p, Actual = %p\n",         \
+                          __LINE__, (void *)(A), (void *)(B));                   \
+            return TEST_FAIL;                                                  \
+        }                                                                      \
+    }
+
 #define ASSERT_NEQ(A, B)                                                       \
     {                                                                          \
         if ((A) == (B)) {                                                      \
@@ -60,6 +70,16 @@ extern int (*utest_printer)(const char *, ...);
             utest_printer(RED "failed" RESET ": " __FILE__                     \
                               "+%d: %llu == %llu\n",                           \
                           __LINE__, (uint_t)(A), (uint_t)(B));                 \
+            return TEST_FAIL;                                                  \
+        }                                                                      \
+    }
+
+#define ASSERT_PTR_NEQ(A, B)                                              \
+    {                                                                          \
+        if ((A) == (B)) {                                                      \
+            utest_printer(RED "failed" RESET ": " __FILE__                     \
+                              "+%d: %p == %p\n",                           \
+                          __LINE__, (void *)(A), (void *)(B));                 \
             return TEST_FAIL;                                                  \
         }                                                                      \
     }
