@@ -15,6 +15,17 @@ consists of:
 
 In your entrypoint, register each test and then call `run_tests()`.
 
+# Assertions
+
+* `ASSERT_EQ(A, B)`
+* `ASSERT_UNSIGNED_EQ(A, B)`
+* `ASSERT_NEQ(A, B)`
+* `ASSERT_UNSIGNED_NEQ(A, B)`
+* `ASSERT_ALMOST_EQ(A, B, D)`
+* `ASSERT_UNSIGNED_ALMOST_EQ(A, B, D)`
+* `ASSERT_FLOAT_EQ(A, B, D)`
+* `ASSERT_NULL(A)`
+* `ASSERT_NOT_NULL(A)`
 
 # Example
 

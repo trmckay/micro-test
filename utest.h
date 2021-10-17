@@ -21,7 +21,8 @@
 #define UTEST_PRINT_BUF_SIZE 1024
 #endif
 
-typedef unsigned long long int bigint_t;
+typedef unsigned long long int uint_t;
+typedef long long int int_t;
 
 static char print_buf[UTEST_PRINT_BUF_SIZE];
 
@@ -50,18 +51,79 @@ static char print_buf[UTEST_PRINT_BUF_SIZE];
 
 #define ASSERT_EQ(A, B)                                                        \
     {                                                                          \
-        if ((bigint_t)(A) != (bigint_t)(B)) {                                  \
-            printf(RED "failed" RESET ": " __FILE__ "+%d: %lld != %lld\n",     \
-                   __LINE__, (bigint_t)(A), (bigint_t)(B));                    \
+        if ((A) != (B)) {                                                      \
+            printf(RED "failed" RESET ": " __FILE__                            \
+                       "+%d: Expected = %lld, Actual = %lld\n",                \
+                   __LINE__, (int_t)(A), (int_t)(B));                          \
+            return TEST_FAIL;                                                  \
+        }                                                                      \
+    }
+
+#define ASSERT_UNSIGNED_EQ(A, B)                                               \
+    {                                                                          \
+        if ((A) != (B)) {                                                      \
+            printf(RED "failed" RESET ": " __FILE__                            \
+                       "+%d: Expected = %llu, Actual = %llu\n",              \
+                   __LINE__, (uint_t)(A), (uint_t)(B));                        \
             return TEST_FAIL;                                                  \
         }                                                                      \
     }
 
 #define ASSERT_NEQ(A, B)                                                       \
     {                                                                          \
-        if ((bigint_t)(A) == (bigint_t)(B)) {                                  \
+        if ((A) == (B)) {                                                      \
             printf(RED "failed" RESET ": " __FILE__ "+%d: %lld == %lld\n",     \
-                   __LINE__, (bigint_t)(A), (bigint_t)(B));                    \
+                   __LINE__, (int_t)(A), (int_t)(B));                          \
+            return TEST_FAIL;                                                  \
+        }                                                                      \
+    }
+
+#define ASSERT_UNSIGNED_NEQ(A, B)                                              \
+    {                                                                          \
+        if ((A) == (B)) {                                                      \
+            printf(RED "failed" RESET ": " __FILE__ "+%d: %llu == %llu\n",   \
+                   __LINE__, (uint_t)(A), (uint_t)(B));                        \
+            return TEST_FAIL;                                                  \
+        }                                                                      \
+    }
+
+#define ABS(A) ((A > 0) ? (A) : (-A))
+
+#define ASSERT_ALMOST_EQ(A, B, D)                                              \
+    {                                                                          \
+        if (ABS((A) - (B)) > D) {                                              \
+            printf(RED "failed" RESET ": " __FILE__                            \
+                       "+%d: Expected: %lld, Actual: %lld\n",                  \
+                   __LINE__, (int_t)(A), (int_t)(B));                          \
+            return TEST_FAIL;                                                  \
+        }                                                                      \
+    }
+
+#define ASSERT_UNSIGNED_ALMOST_EQ(A, B, D)                                     \
+    {                                                                          \
+        if (ABS((A) - (B)) > D) {                                              \
+            printf(RED "failed" RESET ": " __FILE__                            \
+                       "+%d: Expected = %llu, Actual = %llu\n",              \
+                   __LINE__, (uint_t)(A), (uint_t)(B));                        \
+            return TEST_FAIL;                                                  \
+        }                                                                      \
+    }
+
+#define ASSERT_FLOAT_EQ(A, B, D)                                               \
+    {                                                                          \
+        if (ABS((A) - (B)) > D) {                                              \
+            printf(RED "failed" RESET ": " __FILE__                            \
+                       "+%d: Expected = %f, Actual = %f\n",                    \
+                   __LINE__, (A), (B));                                        \
+            return TEST_FAIL;                                                  \
+        }                                                                      \
+    }
+
+#define ASSERT_NULL(A)                                                         \
+    {                                                                          \
+        if ((void *)(A) != NULL) {                                             \
+            printf(RED "failed" RESET ": " __FILE__ "+%d: %p not null\n",      \
+                   __LINE__, (void *)(A));                                     \
             return TEST_FAIL;                                                  \
         }                                                                      \
     }
@@ -69,8 +131,8 @@ static char print_buf[UTEST_PRINT_BUF_SIZE];
 #define ASSERT_NOT_NULL(A)                                                     \
     {                                                                          \
         if ((void *)(A) == NULL) {                                             \
-            printf(RED "failed" RESET ": " __FILE__ "+%d: %p == NULL\n",       \
-                   __LINE__, (void *)(A));                                     \
+            printf(RED "failed" RESET ": " __FILE__ "+%d: Null-pointer\n",     \
+                   __LINE__);                                                  \
             return TEST_FAIL;                                                  \
         }                                                                      \
     }
