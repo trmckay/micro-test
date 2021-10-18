@@ -44,12 +44,12 @@ extern int (*utest_printer)(const char *, ...);
         }                                                                      \
     }
 
-#define ASSERT_PTR_EQ(A, B)                                                        \
+#define ASSERT_PTR_EQ(A, B)                                                    \
     {                                                                          \
         if ((A) != (B)) {                                                      \
             utest_printer(RED "failed" RESET ": " __FILE__                     \
-                              "+%d: Expected = %p, Actual = %p\n",         \
-                          __LINE__, (void *)(A), (void *)(B));                   \
+                              "+%d: Expected = %p, Actual = %p\n",             \
+                          __LINE__, (void *)(A), (void *)(B));                 \
             return TEST_FAIL;                                                  \
         }                                                                      \
     }
@@ -74,11 +74,10 @@ extern int (*utest_printer)(const char *, ...);
         }                                                                      \
     }
 
-#define ASSERT_PTR_NEQ(A, B)                                              \
+#define ASSERT_PTR_NEQ(A, B)                                                   \
     {                                                                          \
         if ((A) == (B)) {                                                      \
-            utest_printer(RED "failed" RESET ": " __FILE__                     \
-                              "+%d: %p == %p\n",                           \
+            utest_printer(RED "failed" RESET ": " __FILE__ "+%d: %p == %p\n",  \
                           __LINE__, (void *)(A), (void *)(B));                 \
             return TEST_FAIL;                                                  \
         }                                                                      \
@@ -139,12 +138,22 @@ extern int (*utest_printer)(const char *, ...);
 typedef int (*int_fn_void)(void);
 typedef void (*void_fn_void)(void);
 
+#ifdef NO_STD
 typedef struct test_st {
     int_fn_void fn;
     void_fn_void setup;
     void_fn_void teardown;
     char name[UTEST_NAME_SIZE];
 } test_t;
+#else
+typedef struct test_st {
+    int_fn_void fn;
+    void_fn_void setup;
+    void_fn_void teardown;
+    char name[UTEST_NAME_SIZE];
+    struct test_st *next;
+} test_t;
+#endif
 
 void register_test(int_fn_void, void_fn_void, void_fn_void, char *);
 

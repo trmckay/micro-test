@@ -15,7 +15,11 @@ consists of:
 
 In your entrypoint, register each test and then call `run_tests()`.
 
-# Assertions
+µ-test works without the standard library, as well! Compile with `-D NO_STD` to avoid including
+stdlib/stdio. Then in your main routine, set the function pointer `int (*utest_printer)(const char *, ...)`
+to provide a replacement for `printf(3)`.
+
+# Provided assertions
 
 * `ASSERT_EQ(A, B)`
 * `ASSERT_UNSIGNED_EQ(A, B)`
