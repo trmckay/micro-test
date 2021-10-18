@@ -3,6 +3,13 @@
 
 #define TEST_PASS 0
 #define TEST_FAIL 1
+#define TEST_ERROR 2
+
+#define UTEST_LOG "/tmp/utest.log"
+
+#ifndef EXIT_FAILURE
+#define EXIT_FAILURE 1
+#endif
 
 #define UTEST_MAX_TESTS 256
 #define UTEST_NAME_SIZE 32
@@ -17,9 +24,11 @@ typedef long long int int_t;
 
 extern int (*utest_printer)(const char *, ...);
 
+extern int utest_capture;
+
 #define FAIL()                                                                 \
     {                                                                          \
-        utest_printer(RED "failed" RESET ": " __FILE__ "+%d: explicit fail\n", \
+        utest_printer(__FILE__ "+%d: explicit fail\n", \
                       __LINE__);                                               \
         return TEST_FAIL;                                                      \
     }
@@ -27,7 +36,7 @@ extern int (*utest_printer)(const char *, ...);
 #define ASSERT_EQ(A, B)                                                        \
     {                                                                          \
         if ((A) != (B)) {                                                      \
-            utest_printer(RED "failed" RESET ": " __FILE__                     \
+            utest_printer(__FILE__                     \
                               "+%d: Expected = %lld, Actual = %lld\n",         \
                           __LINE__, (int_t)(A), (int_t)(B));                   \
             return TEST_FAIL;                                                  \
@@ -37,7 +46,7 @@ extern int (*utest_printer)(const char *, ...);
 #define ASSERT_UNSIGNED_EQ(A, B)                                               \
     {                                                                          \
         if ((A) != (B)) {                                                      \
-            utest_printer(RED "failed" RESET ": " __FILE__                     \
+            utest_printer(__FILE__                     \
                               "+%d: Expected = %llu, Actual = %llu\n",         \
                           __LINE__, (uint_t)(A), (uint_t)(B));                 \
             return TEST_FAIL;                                                  \
@@ -47,7 +56,7 @@ extern int (*utest_printer)(const char *, ...);
 #define ASSERT_PTR_EQ(A, B)                                                    \
     {                                                                          \
         if ((A) != (B)) {                                                      \
-            utest_printer(RED "failed" RESET ": " __FILE__                     \
+            utest_printer(__FILE__                     \
                               "+%d: Expected = %p, Actual = %p\n",             \
                           __LINE__, (void *)(A), (void *)(B));                 \
             return TEST_FAIL;                                                  \
@@ -57,7 +66,7 @@ extern int (*utest_printer)(const char *, ...);
 #define ASSERT_NEQ(A, B)                                                       \
     {                                                                          \
         if ((A) == (B)) {                                                      \
-            utest_printer(RED "failed" RESET ": " __FILE__                     \
+            utest_printer(__FILE__                     \
                               "+%d: %lld == %lld\n",                           \
                           __LINE__, (int_t)(A), (int_t)(B));                   \
             return TEST_FAIL;                                                  \
@@ -67,7 +76,7 @@ extern int (*utest_printer)(const char *, ...);
 #define ASSERT_UNSIGNED_NEQ(A, B)                                              \
     {                                                                          \
         if ((A) == (B)) {                                                      \
-            utest_printer(RED "failed" RESET ": " __FILE__                     \
+            utest_printer(__FILE__                     \
                               "+%d: %llu == %llu\n",                           \
                           __LINE__, (uint_t)(A), (uint_t)(B));                 \
             return TEST_FAIL;                                                  \
@@ -77,7 +86,7 @@ extern int (*utest_printer)(const char *, ...);
 #define ASSERT_PTR_NEQ(A, B)                                                   \
     {                                                                          \
         if ((A) == (B)) {                                                      \
-            utest_printer(RED "failed" RESET ": " __FILE__ "+%d: %p == %p\n",  \
+            utest_printer(__FILE__ "+%d: %p == %p\n",  \
                           __LINE__, (void *)(A), (void *)(B));                 \
             return TEST_FAIL;                                                  \
         }                                                                      \
@@ -88,7 +97,7 @@ extern int (*utest_printer)(const char *, ...);
 #define ASSERT_ALMOST_EQ(A, B, D)                                              \
     {                                                                          \
         if (ABS((A) - (B)) > D) {                                              \
-            utest_printer(RED "failed" RESET ": " __FILE__                     \
+            utest_printer(__FILE__                     \
                               "+%d: Expected: %lld, Actual: %lld\n",           \
                           __LINE__, (int_t)(A), (int_t)(B));                   \
             return TEST_FAIL;                                                  \
@@ -98,7 +107,7 @@ extern int (*utest_printer)(const char *, ...);
 #define ASSERT_UNSIGNED_ALMOST_EQ(A, B, D)                                     \
     {                                                                          \
         if (ABS((A) - (B)) > D) {                                              \
-            utest_printer(RED "failed" RESET ": " __FILE__                     \
+            utest_printer(__FILE__                     \
                               "+%d: Expected = %llu, Actual = %llu\n",         \
                           __LINE__, (uint_t)(A), (uint_t)(B));                 \
             return TEST_FAIL;                                                  \
@@ -108,7 +117,7 @@ extern int (*utest_printer)(const char *, ...);
 #define ASSERT_FLOAT_EQ(A, B, D)                                               \
     {                                                                          \
         if (ABS((A) - (B)) > D) {                                              \
-            utest_printer(RED "failed" RESET ": " __FILE__                     \
+            utest_printer(__FILE__                     \
                               "+%d: Expected = %f, Actual = %f\n",             \
                           __LINE__, (A), (B));                                 \
             return TEST_FAIL;                                                  \
@@ -118,7 +127,7 @@ extern int (*utest_printer)(const char *, ...);
 #define ASSERT_NULL(A)                                                         \
     {                                                                          \
         if ((void *)(A) != NULL) {                                             \
-            utest_printer(RED "failed" RESET ": " __FILE__                     \
+            utest_printer(__FILE__                     \
                               "+%d: %p not null\n",                            \
                           __LINE__, (void *)(A));                              \
             return TEST_FAIL;                                                  \
@@ -128,7 +137,7 @@ extern int (*utest_printer)(const char *, ...);
 #define ASSERT_NOT_NULL(A)                                                     \
     {                                                                          \
         if ((void *)(A) == NULL) {                                             \
-            utest_printer(RED "failed" RESET ": " __FILE__                     \
+            utest_printer(__FILE__                     \
                               "+%d: Null-pointer\n",                           \
                           __LINE__);                                           \
             return TEST_FAIL;                                                  \

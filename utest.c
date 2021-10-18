@@ -1,5 +1,7 @@
 #include "utest.h"
+#include <fcntl.h>
 #include <string.h>
+#include <unistd.h>
 
 #ifdef NO_STD
 
@@ -20,7 +22,9 @@ test_t *head = NULL;
 
 #endif
 
-static int tname_width = 18;
+int utest_capture = 1;
+
+static int tname_width = 0;
 
 void register_test(int_fn_void fn, void_fn_void setup, void_fn_void teardown,
                    char *name) {
@@ -70,6 +74,73 @@ void register_test(int_fn_void fn, void_fn_void setup, void_fn_void teardown,
     }
 }
 
+int run_test(test_t *test) {
+    int status, log, stdout_cpy, stderr_cpy;
+
+    if (utest_capture) {
+        if ((log = open(UTEST_LOG, O_WRONLY | O_CREAT | O_TRUNC, 0600)) == -1)
+            return TEST_ERROR;
+
+        if ((stdout_cpy = dup(1)) == -1)
+            return TEST_ERROR;
+
+        if ((stderr_cpy = dup(2)) == -1)
+            return TEST_ERROR;
+
+        close(1);
+        close(2);
+
+        if (dup2(log, 1) == -1)
+            return TEST_ERROR;
+
+        if (dup2(log, 2) == -1)
+            return TEST_ERROR;
+    }
+
+    if (test->setup)
+        test->setup();
+
+    status = test->fn();
+
+    if (test->teardown)
+        test->teardown();
+
+    if (utest_capture) {
+        if (dup2(stdout_cpy, 1) == -1)
+            return TEST_ERROR;
+
+        if (dup2(stderr_cpy, 2) == -1)
+            return TEST_ERROR;
+
+        if (close(stdout_cpy) == -1)
+            return TEST_ERROR;
+
+        if (close(stderr_cpy) == -1)
+            return TEST_ERROR;
+
+        if (close(log) == -1)
+            return TEST_ERROR;
+    }
+
+    return status;
+}
+
+void echo_log() {
+    int log, nb, w;
+    char buf[256];
+
+    if ((log = open(UTEST_LOG, O_RDONLY)) == -1) {
+        return;
+    }
+
+    while ((nb = read(log, buf, 256)) > 0) {
+        w = write(1, buf, nb);
+        while (w != -1 && (nb -= w) > 0);
+    }
+
+    close(log);
+}
+
 int run_tests(void) {
     int status, failed = 0, passed = 0;
     test_t test;
@@ -83,6 +154,9 @@ int run_tests(void) {
 #else
     test_t *curr = head, *tmp;
 
+    setbuf(stdout, NULL);
+    setbuf(stderr, NULL);
+
     while (curr != NULL) {
         test = *curr;
 #endif
@@ -94,19 +168,14 @@ int run_tests(void) {
         }
         utest_printer("... ");
 
-        if (test.setup)
-            test.setup();
-
-        if ((status = test.fn())) {
+        if ((status = run_test(&test)) == 1) {
             failed++;
+            utest_printer(RED "failed" RESET "\n");
+            echo_log();
+        } else if (status == TEST_ERROR) {
+            return TEST_ERROR;
         } else {
             passed++;
-        }
-
-        if (test.teardown)
-            test.teardown();
-
-        if (!status) {
             utest_printer(GREEN "ok" RESET "\n");
         }
 
@@ -117,7 +186,7 @@ int run_tests(void) {
 #endif
     }
 
-    utest_printer("\nSummary: %d passed, %d failed.\n", passed, failed);
+    utest_printer("Summary: %d passed, %d failed.\n", passed, failed);
 
     return failed != 0;
 }
