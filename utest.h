@@ -83,7 +83,7 @@ extern int (*utest_printer)(const char *, ...);
         }                                                                      \
     }
 
-#define ABS(A) ((A > 0) ? (A) : (-A))
+#define ABS(A) ((A > 0) ? (A) : -(A))
 
 #define ASSERT_ALMOST_EQ(A, B, D)                                              \
     {                                                                          \
