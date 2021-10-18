@@ -1,6 +1,6 @@
 # µ-test
 
-A micro unit testing framework for C/C++ to get you up and running with unit-testing ASAP.
+A micro unit testing framework for C/C++ to get you up and running with unit-testing ASAP (even without libc).
 
 
 # Overview
