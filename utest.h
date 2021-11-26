@@ -164,7 +164,7 @@ typedef struct test_st {
 } test_t;
 #endif
 
-void register_test(int_fn_void, void_fn_void, void_fn_void, char *);
+void register_test(int_fn_void, void_fn_void, void_fn_void, const char *);
 
 int run_tests(void);
 

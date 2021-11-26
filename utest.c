@@ -27,7 +27,7 @@ int utest_capture = 1;
 static int tname_width = 0;
 
 void register_test(int_fn_void fn, void_fn_void setup, void_fn_void teardown,
-                   char *name) {
+                   const char *name) {
     size_t nlen;
     test_t test;
 
