@@ -28,17 +28,35 @@ extern int utest_capture;
 
 #define FAIL()                                                                 \
     {                                                                          \
-        utest_printer(__FILE__ "+%d: explicit fail\n", \
-                      __LINE__);                                               \
+        utest_printer(__FILE__ "+%d: explicit fail\n", __LINE__);              \
         return TEST_FAIL;                                                      \
     }
 
 #define ASSERT_EQ(A, B)                                                        \
     {                                                                          \
         if ((A) != (B)) {                                                      \
-            utest_printer(__FILE__                     \
-                              "+%d: Expected = %lld, Actual = %lld\n",         \
+            utest_printer(__FILE__ "+%d: Expected = %lld, Actual = %lld\n",    \
                           __LINE__, (int_t)(A), (int_t)(B));                   \
+            return TEST_FAIL;                                                  \
+        }                                                                      \
+    }
+
+#define ASSERT_TRUE(A)                                                         \
+    {                                                                          \
+        if (!(A)) {                                                            \
+            utest_printer(__FILE__                                             \
+                          "+%d: Expected truthy value, Actual = %lld\n",       \
+                          __LINE__, (int_t)(A));                               \
+            return TEST_FAIL;                                                  \
+        }                                                                      \
+    }
+
+#define ASSERT_FALSE(A)                                                        \
+    {                                                                          \
+        if (A) {                                                               \
+            utest_printer(__FILE__                                             \
+                          "+%d: Expected falsy value, Actual = %lld\n",        \
+                          __LINE__, (int_t)(A));                               \
             return TEST_FAIL;                                                  \
         }                                                                      \
     }
@@ -46,8 +64,7 @@ extern int utest_capture;
 #define ASSERT_UNSIGNED_EQ(A, B)                                               \
     {                                                                          \
         if ((A) != (B)) {                                                      \
-            utest_printer(__FILE__                     \
-                              "+%d: Expected = %llu, Actual = %llu\n",         \
+            utest_printer(__FILE__ "+%d: Expected = %llu, Actual = %llu\n",    \
                           __LINE__, (uint_t)(A), (uint_t)(B));                 \
             return TEST_FAIL;                                                  \
         }                                                                      \
@@ -56,8 +73,7 @@ extern int utest_capture;
 #define ASSERT_PTR_EQ(A, B)                                                    \
     {                                                                          \
         if ((A) != (B)) {                                                      \
-            utest_printer(__FILE__                     \
-                              "+%d: Expected = %p, Actual = %p\n",             \
+            utest_printer(__FILE__ "+%d: Expected = %p, Actual = %p\n",        \
                           __LINE__, (void *)(A), (void *)(B));                 \
             return TEST_FAIL;                                                  \
         }                                                                      \
@@ -66,9 +82,8 @@ extern int utest_capture;
 #define ASSERT_NEQ(A, B)                                                       \
     {                                                                          \
         if ((A) == (B)) {                                                      \
-            utest_printer(__FILE__                     \
-                              "+%d: %lld == %lld\n",                           \
-                          __LINE__, (int_t)(A), (int_t)(B));                   \
+            utest_printer(__FILE__ "+%d: %lld == %lld\n", __LINE__,            \
+                          (int_t)(A), (int_t)(B));                             \
             return TEST_FAIL;                                                  \
         }                                                                      \
     }
@@ -76,9 +91,8 @@ extern int utest_capture;
 #define ASSERT_UNSIGNED_NEQ(A, B)                                              \
     {                                                                          \
         if ((A) == (B)) {                                                      \
-            utest_printer(__FILE__                     \
-                              "+%d: %llu == %llu\n",                           \
-                          __LINE__, (uint_t)(A), (uint_t)(B));                 \
+            utest_printer(__FILE__ "+%d: %llu == %llu\n", __LINE__,            \
+                          (uint_t)(A), (uint_t)(B));                           \
             return TEST_FAIL;                                                  \
         }                                                                      \
     }
@@ -86,8 +100,8 @@ extern int utest_capture;
 #define ASSERT_PTR_NEQ(A, B)                                                   \
     {                                                                          \
         if ((A) == (B)) {                                                      \
-            utest_printer(__FILE__ "+%d: %p == %p\n",  \
-                          __LINE__, (void *)(A), (void *)(B));                 \
+            utest_printer(__FILE__ "+%d: %p == %p\n", __LINE__, (void *)(A),   \
+                          (void *)(B));                                        \
             return TEST_FAIL;                                                  \
         }                                                                      \
     }
@@ -97,8 +111,7 @@ extern int utest_capture;
 #define ASSERT_ALMOST_EQ(A, B, D)                                              \
     {                                                                          \
         if (ABS((A) - (B)) > D) {                                              \
-            utest_printer(__FILE__                     \
-                              "+%d: Expected: %lld, Actual: %lld\n",           \
+            utest_printer(__FILE__ "+%d: Expected: %lld, Actual: %lld\n",      \
                           __LINE__, (int_t)(A), (int_t)(B));                   \
             return TEST_FAIL;                                                  \
         }                                                                      \
@@ -107,8 +120,7 @@ extern int utest_capture;
 #define ASSERT_UNSIGNED_ALMOST_EQ(A, B, D)                                     \
     {                                                                          \
         if (ABS((A) - (B)) > D) {                                              \
-            utest_printer(__FILE__                     \
-                              "+%d: Expected = %llu, Actual = %llu\n",         \
+            utest_printer(__FILE__ "+%d: Expected = %llu, Actual = %llu\n",    \
                           __LINE__, (uint_t)(A), (uint_t)(B));                 \
             return TEST_FAIL;                                                  \
         }                                                                      \
@@ -117,8 +129,7 @@ extern int utest_capture;
 #define ASSERT_FLOAT_EQ(A, B, D)                                               \
     {                                                                          \
         if (ABS((A) - (B)) > D) {                                              \
-            utest_printer(__FILE__                     \
-                              "+%d: Expected = %f, Actual = %f\n",             \
+            utest_printer(__FILE__ "+%d: Expected = %f, Actual = %f\n",        \
                           __LINE__, (A), (B));                                 \
             return TEST_FAIL;                                                  \
         }                                                                      \
@@ -127,9 +138,8 @@ extern int utest_capture;
 #define ASSERT_NULL(A)                                                         \
     {                                                                          \
         if ((void *)(A) != NULL) {                                             \
-            utest_printer(__FILE__                     \
-                              "+%d: %p not null\n",                            \
-                          __LINE__, (void *)(A));                              \
+            utest_printer(__FILE__ "+%d: %p not null\n", __LINE__,             \
+                          (void *)(A));                                        \
             return TEST_FAIL;                                                  \
         }                                                                      \
     }
@@ -137,9 +147,7 @@ extern int utest_capture;
 #define ASSERT_NOT_NULL(A)                                                     \
     {                                                                          \
         if ((void *)(A) == NULL) {                                             \
-            utest_printer(__FILE__                     \
-                              "+%d: Null-pointer\n",                           \
-                          __LINE__);                                           \
+            utest_printer(__FILE__ "+%d: Null-pointer\n", __LINE__);           \
             return TEST_FAIL;                                                  \
         }                                                                      \
     }
