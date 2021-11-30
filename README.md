@@ -23,17 +23,7 @@ By default, output (e.g. from `printf(3)`) is only echoed when a test fails. To 
 
 # Provided assertions
 
-* `ASSERT_EQ(A, B)`
-* `ASSERT_UNSIGNED_EQ(A, B)`
-* `ASSERT_PTR_EQ(A, B)`
-* `ASSERT_NEQ(A, B)`
-* `ASSERT_UNSIGNED_NEQ(A, B)`
-* `ASSERT_PTR_NEQ(A, B)`
-* `ASSERT_ALMOST_EQ(A, B, D)`
-* `ASSERT_UNSIGNED_ALMOST_EQ(A, B, D)`
-* `ASSERT_FLOAT_EQ(A, B, D)`
-* `ASSERT_NULL(A)`
-* `ASSERT_NOT_NULL(A)`
+See [`utest.h`](./utest.h) for all assertions.
 
 # Example
 
