@@ -75,7 +75,7 @@ void register_test(int_fn_void fn, void_fn_void setup, void_fn_void teardown,
 }
 
 int run_test(test_t *test) {
-    int status, log, stdout_cpy, stderr_cpy;
+    int status = 0, log, stdout_cpy, stderr_cpy;
 
     if (utest_capture) {
         if ((log = open(UTEST_LOG, O_WRONLY | O_CREAT | O_TRUNC, 0600)) == -1)
@@ -100,7 +100,8 @@ int run_test(test_t *test) {
     if (test->setup)
         test->setup();
 
-    status = test->fn();
+    if (test->fn())
+        status = 1;
 
     if (test->teardown)
         test->teardown();
